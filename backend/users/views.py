@@ -43,14 +43,15 @@ class GroupListCreateView(generics.ListCreateAPIView):
         return GroupSerializer
 
     def get_queryset(self):
-        return self.request.user.groups.all()
+        return self.request.user.grind_groups.all()
+
 
 
 class GroupDetailView(generics.RetrieveUpdateDestroyAPIView):
     serializer_class = GroupSerializer
 
     def get_queryset(self):
-        return self.request.user.groups.all()
+        return self.request.user.grind_groups.all()
 
 
 @api_view(["POST"])

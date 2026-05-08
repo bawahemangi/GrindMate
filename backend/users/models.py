@@ -46,7 +46,7 @@ class Group(models.Model):
     description = models.TextField(blank=True)
     invite_code = models.CharField(max_length=8, unique=True, default=generate_invite_code)
     admin = models.ForeignKey(User, on_delete=models.CASCADE, related_name="administered_groups")
-    members = models.ManyToManyField(User, related_name="groups", blank=True)
+    members = models.ManyToManyField(User, related_name="grind_groups", blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
