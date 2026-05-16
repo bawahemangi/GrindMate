@@ -71,7 +71,7 @@ class DailyProgress(models.Model):
     tasks_total = models.PositiveIntegerField(default=0)
 
     class Meta:
-        unique_together = ["user", "group", "date"]
+        pass
 
     @property
     def completion_percent(self):
