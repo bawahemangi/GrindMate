@@ -12,7 +12,7 @@ class TaskSerializer(serializers.ModelSerializer):
     class Meta:
         model = Task
         fields = [
-            "id", "group", "created_by", "title", "description",
+            "id", "group", "assigned_to", "created_by", "title", "description",
             "category", "frequency", "target_count", "is_default",
             "is_active", "due_date", "created_at",
             "user_completion_today", "total_completions_today",
@@ -37,7 +37,7 @@ class TaskSerializer(serializers.ModelSerializer):
 class TaskCreateSerializer(serializers.ModelSerializer):
     class Meta:
         model = Task
-        fields = ["title", "description", "category", "frequency", "target_count", "is_default", "due_date", "group"]
+        fields = ["title", "description", "category", "frequency", "target_count", "is_default", "due_date", "group", "assigned_to"]
 
     def create(self, validated_data):
         validated_data["created_by"] = self.context["request"].user

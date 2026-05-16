@@ -22,7 +22,7 @@ class TaskListCreateView(generics.ListCreateAPIView):
         today = timezone.now().date()
 
         qs = Task.objects.filter(
-            Q(group__members=user) | Q(created_by=user),
+            Q(group__members=user) | Q(created_by=user) | Q(assigned_to=user),
             is_active=True,
         ).distinct()
 
@@ -46,7 +46,7 @@ class TaskDetailView(generics.RetrieveUpdateDestroyAPIView):
     def get_queryset(self):
         user = self.request.user
         return Task.objects.filter(
-            Q(group__members=user) | Q(created_by=user)
+            Q(group__members=user) | Q(created_by=user) | Q(assigned_to=user)
         ).distinct()
 
 
@@ -102,8 +102,13 @@ def today_stats(request):
     group_id = request.query_params.get("group")
     today = timezone.now().date()
 
+    # A task is meant for the user if it's assigned to them, 
+    # OR it's an unassigned group task for a group they are in,
+    # OR it's a personal task they created (not assigned to anyone else).
     task_qs = Task.objects.filter(
-        Q(group__members=user) | Q(created_by=user),
+        (Q(group__members=user) & Q(assigned_to__isnull=True)) | 
+        Q(assigned_to=user) | 
+        (Q(group__isnull=True) & Q(created_by=user) & Q(assigned_to__isnull=True)),
         is_active=True,
         frequency__in=["daily"],
     ).distinct()
@@ -139,12 +144,12 @@ def completion_history(request):
 
 @api_view(["POST"])
 def seed_default_tasks(request, group_id):
-    """Seed default tasks for a group (admin only)."""
+    """Seed default tasks for a group."""
     from users.models import Group
     try:
-        group = Group.objects.get(pk=group_id, admin=request.user)
+        group = Group.objects.get(Q(pk=group_id) & (Q(admin=request.user) | Q(members=request.user)))
     except Group.DoesNotExist:
-        return Response({"error": "Only group admin can seed tasks."}, status=403)
+        return Response({"error": "Only group members can seed tasks."}, status=403)
 
     defaults = [
         {"title": "2 DSA Problems", "category": "dsa", "target_count": 2, "frequency": "daily"},

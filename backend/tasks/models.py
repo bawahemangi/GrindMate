@@ -22,6 +22,10 @@ class Task(models.Model):
     group = models.ForeignKey(
         "users.Group", on_delete=models.CASCADE, related_name="tasks", null=True, blank=True
     )
+    assigned_to = models.ForeignKey(
+        User, on_delete=models.CASCADE, related_name="assigned_tasks", null=True, blank=True,
+        help_text="Specific user this task is assigned to (for personal or targeted tasks)"
+    )
     created_by = models.ForeignKey(User, on_delete=models.CASCADE, related_name="created_tasks")
     title = models.CharField(max_length=200)
     description = models.TextField(blank=True)
@@ -61,7 +65,7 @@ class TaskCompletion(models.Model):
 class DailyProgress(models.Model):
     """Cached daily progress per user per group for quick leaderboard queries."""
     user = models.ForeignKey(User, on_delete=models.CASCADE)
-    group = models.ForeignKey("users.Group", on_delete=models.CASCADE)
+    group = models.ForeignKey("users.Group", on_delete=models.CASCADE, null=True, blank=True)
     date = models.DateField()
     tasks_completed = models.PositiveIntegerField(default=0)
     tasks_total = models.PositiveIntegerField(default=0)

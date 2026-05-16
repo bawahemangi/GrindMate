@@ -84,12 +84,10 @@ export default function GroupPage() {
             <Trophy size={15} className="text-yellow-400" />
             Leaderboard
           </Link>
-          {isAdmin && (
-            <button onClick={() => setShowAddTask(true)} className="btn-primary flex items-center gap-2 text-sm">
-              <Plus size={15} />
-              Add Task
-            </button>
-          )}
+          <button onClick={() => setShowAddTask(true)} className="btn-primary flex items-center gap-2 text-sm">
+            <Plus size={15} />
+            Add Task
+          </button>
         </div>
       </div>
 
@@ -160,7 +158,7 @@ export default function GroupPage() {
         </div>
       </div>
 
-      {showAddTask && <AddTaskModal groupId={parseInt(id)} onClose={() => setShowAddTask(false)} />}
+      {showAddTask && <AddTaskModal groupId={parseInt(id)} members={group?.members || []} onClose={() => setShowAddTask(false)} />}
     </div>
   )
 }

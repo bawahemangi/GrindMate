@@ -6,8 +6,6 @@ from django.db import models
 
 def generate_invite_code():
     return "".join(random.choices(string.ascii_uppercase + string.digits, k=8))
-
-
 class User(AbstractUser):
     email = models.EmailField(unique=True)
     phone = models.CharField(max_length=20, blank=True, help_text="With country code, e.g. +919876543210")
